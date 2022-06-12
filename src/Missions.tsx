@@ -8,6 +8,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
   TextField,
   Toolbar,
   Typography,
@@ -38,12 +39,31 @@ const COLUMNS = ['Name', 'Twitter', 'Website', 'Wikipedia'];
 const Missions = () => {
   const { loading, error, data } = useQuery(GET_MISSIONS);
   const [rows, setRows] = useState<Mission[] | null>([]);
+  const [ascRows, setAscRows] = useState<Mission[] | null>([]);
+  const [descRows, setDescRows] = useState<Mission[] | null>([]);
+  const [orderBy, setOrderBy] = useState<'asc' | 'desc' | undefined>('asc');
 
   useEffect(() => {
     if (data?.missions) {
       const missions = [...data.missions];
-      console.log(missions);
+
+      const asc = [
+        ...missions.sort((a: Mission, b: Mission) =>
+          a.name > b.name ? 1 : -1
+        ),
+      ];
+      console.log('asc', asc);
+
+      const desc = [
+        ...missions.sort((a: Mission, b: Mission) =>
+          a.name < b.name ? 1 : -1
+        ),
+      ];
+      console.log('desc', desc);
+
       setRows(missions);
+      setAscRows(asc);
+      setDescRows(desc);
     }
   }, [data]);
 
@@ -53,6 +73,16 @@ const Missions = () => {
       mission.name.includes(value)
     );
     setRows(filteredRows);
+  };
+
+  const handleSort = (orderBy: 'asc' | 'desc' | undefined) => {
+    if (orderBy === 'asc') {
+      setOrderBy('desc');
+      setRows(descRows);
+    } else if (orderBy === 'desc') {
+      setOrderBy('asc');
+      setRows(ascRows);
+    }
   };
 
   if (loading) return <p>Loading...</p>;
@@ -80,7 +110,16 @@ const Missions = () => {
           <TableHead>
             <TableRow>
               {COLUMNS.map((column) => (
-                <TableCell key={column}>{column}</TableCell>
+                <TableCell key={column}>
+                  {column}
+                  {column === COLUMNS[0] && (
+                    <TableSortLabel
+                      active={true}
+                      direction={orderBy}
+                      onClick={() => handleSort(orderBy)}
+                    />
+                  )}
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
