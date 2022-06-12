@@ -47,6 +47,14 @@ const Missions = () => {
     }
   }, [data]);
 
+  const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const filteredRows = data?.missions.filter((mission: Mission) =>
+      mission.name.includes(value)
+    );
+    setRows(filteredRows);
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
@@ -62,7 +70,11 @@ const Missions = () => {
           >
             Missions
           </Typography>
-          <TextField label="Filter by name" variant="outlined" />
+          <TextField
+            label="Filter by name"
+            variant="outlined"
+            onChange={handleFilter}
+          />
         </Toolbar>
         <Table aria-label="missions table">
           <TableHead>
