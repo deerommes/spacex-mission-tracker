@@ -1,5 +1,11 @@
+import Missions from './Missions';
+
 function App() {
-  return <div>Hello World</div>;
+  return (
+    <div>
+      <Missions />
+    </div>
+  );
 }
 
 export default App;
