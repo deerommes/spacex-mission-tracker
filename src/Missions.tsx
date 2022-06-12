@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { gql, useQuery } from '@apollo/client';
 import {
   Paper,
   Table,
@@ -11,7 +13,43 @@ import {
   Typography,
 } from '@mui/material';
 
+type Mission = {
+  id: string;
+  name: string;
+  twitter: string;
+  website: string;
+  wikipedia: string;
+};
+
+const GET_MISSIONS = gql`
+  query GetMissions {
+    missions {
+      id
+      name
+      twitter
+      website
+      wikipedia
+    }
+  }
+`;
+
+const COLUMNS = ['Name', 'Twitter', 'Website', 'Wikipedia'];
+
 const Missions = () => {
+  const { loading, error, data } = useQuery(GET_MISSIONS);
+  const [rows, setRows] = useState<Mission[] | null>([]);
+
+  useEffect(() => {
+    if (data?.missions) {
+      const missions = [...data.missions];
+      console.log(missions);
+      setRows(missions);
+    }
+  }, [data]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :(</p>;
+
   return (
     <Paper sx={{ m: 2 }}>
       <TableContainer>
@@ -26,26 +64,25 @@ const Missions = () => {
           </Typography>
           <TextField label="Filter by name" variant="outlined" />
         </Toolbar>
-        <Table aria-label="table">
+        <Table aria-label="missions table">
           <TableHead>
             <TableRow>
-              <TableCell component="th" scope="row">
-                Name
-              </TableCell>
-              <TableCell>Twitter</TableCell>
-              <TableCell>Website</TableCell>
-              <TableCell>Wikipedia</TableCell>
+              {COLUMNS.map((column) => (
+                <TableCell key={column}>{column}</TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell component="th" scope="row">
-                mission
-              </TableCell>
-              <TableCell>twitter</TableCell>
-              <TableCell>website</TableCell>
-              <TableCell>wikipedia</TableCell>
-            </TableRow>
+            {rows?.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell component="th" scope="row">
+                  {row.name}
+                </TableCell>
+                <TableCell>{row.twitter || 'NA'}</TableCell>
+                <TableCell>{row.website}</TableCell>
+                <TableCell>{row.wikipedia}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
