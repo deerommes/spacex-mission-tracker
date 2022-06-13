@@ -85,7 +85,7 @@ const Missions = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p data-testid="loading">Loading...</p>;
   if (error) return <p>Error :(</p>;
 
   return (
@@ -96,6 +96,7 @@ const Missions = () => {
             sx={{ flex: '1 1 100%' }}
             variant="h6"
             id="tableTitle"
+            data-testid="missions"
             component="div"
           >
             Missions
