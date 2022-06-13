@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-Clone repo
+run git clone https://github.com/deerommes/spacex-mission-tracker.
 Cd into spacer-mission-tracker folder
 Run the development server:
 
